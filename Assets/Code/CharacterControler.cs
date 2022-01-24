@@ -65,7 +65,16 @@ public class CharacterControler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (transform.position.y > 2)
+        {
+            _GravityDirection.y = -1;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        if (transform.position.y < -2)
+        {
+            _GravityDirection.y = 1;
+            transform.rotation = Quaternion.Euler(0, 0, 180);
+        }
     }
 
     private void FixedUpdate()
@@ -101,8 +110,6 @@ public class CharacterControler : MonoBehaviour
 
 
         //apply gravity 
-
-
     }
 
     void ApplyFootMovement(float speed)
@@ -112,12 +119,18 @@ public class CharacterControler : MonoBehaviour
 
         if (Input.GetKey(_Left))
         {
-            rotationDir += 1;
+            if (transform.position.y > 0)
+                rotationDir += 1;
+            else
+                rotationDir -= 1;
         }
 
         if (Input.GetKey(_Right))
         {
-            rotationDir -= 1;
+            if (transform.position.y > 0)
+                rotationDir -= 1;
+            else
+                rotationDir += 1;
         }
 
         _FootWheel.angularVelocity = new Vector3(0, 0, speed * rotationDir);
@@ -135,12 +148,18 @@ public class CharacterControler : MonoBehaviour
 
         if (Input.GetKey(_Left))
         {
-            _Body.AddForceAtPosition(_Body.transform.right * -leftForce,_Body.worldCenterOfMass, ForceMode.Force);
+            if (transform.position.y > 0)
+                _Body.AddForceAtPosition(_Body.transform.right * -leftForce, _Body.worldCenterOfMass, ForceMode.Force);
+            else
+                _Body.AddForceAtPosition(_Body.transform.right * rightForce, _Body.worldCenterOfMass, ForceMode.Force);
         }
 
         if (Input.GetKey(_Right))
         {
-            _Body.AddForceAtPosition(_Body.transform.right * rightForce, _Body.worldCenterOfMass, ForceMode.Force);
+            if (transform.position.y > 0)
+                _Body.AddForceAtPosition(_Body.transform.right * rightForce, _Body.worldCenterOfMass, ForceMode.Force);
+            else
+                _Body.AddForceAtPosition(_Body.transform.right * -leftForce, _Body.worldCenterOfMass, ForceMode.Force);
         }
 
     }
@@ -161,7 +180,7 @@ public class CharacterControler : MonoBehaviour
         {
             if (_WasJumpPressed == false)
             {
-                _Body.AddForceAtPosition(_GravityDirection * _JumpForce, _Body.worldCenterOfMass);
+                _Body.AddForceAtPosition(_GravityDirection * _JumpForce, _Body.worldCenterOfMass + _GravityDirection);
                 _WasJumpPressed = true;
                 
             }
